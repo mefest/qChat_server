@@ -180,10 +180,12 @@ void server::sendCryptToAll(QString nam, QVector<int> vec)
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out << (quint16)0 << (quint8)21 << nam<<vec;
+    qDebug()<<21<<vec;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     for(int i=0; i<_clients.length();++i)
         _clients.at(i)->write(block);
+
 }
 
 void server::sendRemoveUser(QString name)
