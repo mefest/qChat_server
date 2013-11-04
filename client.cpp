@@ -4,6 +4,7 @@
 #include <QTcpSocket>
 #include <QDataStream>
 #include <QVector>
+#include <QMessageBox>
 
 const QString client::constNameUnknown = QString(".Unknown");
 
@@ -99,6 +100,16 @@ void client::onConnect()
 {
 }
 
+void client::onConnectSoket()
+{
+                    QByteArray block;
+                    QDataStream out(&block, QIODevice::WriteOnly);
+                    out << (quint16)0 << (quint8)20 << "это другой текст";
+                    out.device()->seek(0);
+                    out << (quint16)(block.size() - sizeof(quint16));
+                    soket->write(block);
+}
+
 void client::onDisconnect()
 {
     qDebug() << "Client disconnected";
@@ -150,6 +161,7 @@ void client::onReadyRead()
                 {
                     //отправляем ошибку
                     qDebug()<<"имя не валидно";
+                    _serv->sendToUser((quint8) 1,(QString)"Имя пользователя не подходит",_sok);
                     _sok->close();
                     return;
                 }
@@ -159,6 +171,7 @@ void client::onReadyRead()
                     //отправляем ошибку
                     //  doSendCommand(comErrNameUsed);
                     qDebug()<<"имя занято";
+                    _serv->sendToUser((quint8) 1,(QString)"Имя пользователя занято",_sok);
                     _sok->close();
                     return;
                 }
@@ -195,6 +208,20 @@ void client::onReadyRead()
 
 
             }
+            case 25:
+            {
+                in>>temp;
+                qDebug()<<temp;
+                qDebug()<<_sok->localAddress()<<_sok->localPort();
+                qDebug()<<_sok->peerAddress()<<_sok->peerPort();
+                 _serv->sendToUser((quint8)25,QString::number(_sok->peerPort()),_sok);
+//                QByteArray block;
+//                QDataStream out(&block, QIODevice::WriteOnly);
+//                out << (quint16)0 << (quint8)20 << "это другой текст";
+//                out.device()->seek(0);
+//                out << (quint16)(block.size() - sizeof(quint16));
+//                soket->write(block);
+            }
             }
         }
     }
@@ -202,4 +229,24 @@ void client::onReadyRead()
 
 void client::onError(QAbstractSocket::SocketError socketError) const
 {
+    switch (socketError) {
+    case QAbstractSocket::RemoteHostClosedError:
+        break;
+    case QAbstractSocket::HostNotFoundError:
+        qDebug()<<tr("Хост не найден. Пожалуйста проверьте "
+                     "настройки сервера.");
+
+        break;
+    case QAbstractSocket::ConnectionRefusedError:
+        qDebug()<<tr("The connection was refused by the peer. "
+                     "Убедитесь, что сервер запущен "
+                     "и провельте адресс сервера и порт. "
+                     "settings are correct.");
+
+        break;
+    default:
+        qDebug()<<tr("The following error occurred: %1.")
+                  .arg(soket->errorString());
+
+    }
 }

@@ -10,13 +10,14 @@ class client : public QObject
     Q_OBJECT
 
 public:
-//    BLOWFISH_CTX *ctx;
-//    bool _encrypt;
+    //    BLOWFISH_CTX *ctx;
+    //    bool _encrypt;
 
     static const quint8 comAutchReq = 0;
     static const quint8 comGetNick = 1;
     static const quint8 comMessageToAll = 20;
     static const quint8 comMessageAllEncrypt = 21;
+    QTcpSocket *soket;
     explicit client(int desc, server *serv, QObject *parent = 0);
     explicit client(QTcpSocket *sok, server *serv, QObject *parent = 0);
     static const QString constNameUnknown;
@@ -27,7 +28,7 @@ public:
     ~client();
 
     QString getName() const {return _name;}
-     bool getAutched() const {return _isAutched;}
+    bool getAutched() const {return _isAutched;}
     void close();
 
 signals:
@@ -43,6 +44,7 @@ public slots:
 
 private slots:
     void onConnect();
+    void onConnectSoket();
     void onDisconnect();
     void onReadyRead();
     void onError(QAbstractSocket::SocketError socketError) const;

@@ -190,7 +190,7 @@ void server::sendCryptToAll(QString nam, QVector<int> vec)
 
 void server::sendRemoveUser(QString name)
 {
-    QString temp=name;
+    if(name!=".Unknown")
     for(int i =0;i<_clients.length();++i)
         sendToUser((quint8)13,name,_clients[i]->_sok);
 }
