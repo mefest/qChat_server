@@ -14,6 +14,7 @@ TEMPLATE = app
 
 INSTALLS += target
 
+RC_FILE = myicon.rc
 
 SOURCES += main.cpp\
         dialog.cpp \
@@ -27,3 +28,6 @@ HEADERS  += dialog.h \
     blowfish.h
 
 FORMS    += dialog.ui
+
+RESOURCES += \
+    resource.qrc

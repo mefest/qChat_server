@@ -3,6 +3,7 @@
 #include <QTime>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QMenu>
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -20,6 +21,19 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui->btn_start,SIGNAL(clicked()),this,SLOT(runServer()));
     connect(ui->btn_send,SIGNAL(clicked()),this,SLOT(slotSendMessae()));
 
+#ifdef Q_OS_WIN32
+    tray = new QSystemTrayIcon(QIcon(":/icon/resource/icon/icon.ico"),this);
+    tray->show();
+    QMenu *Menu = new QMenu(this);
+    QAction *showw = new QAction("Show", this);
+    connect(showw, SIGNAL(triggered()), this, SLOT(showEvent()));
+    QAction *quitAction = new QAction("Quit", this);
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(closeEvent2()));
+    Menu->addAction(showw);
+    Menu->addAction(quitAction);
+    tray->setContextMenu(Menu);
+
+#endif
 
 }
 
@@ -109,6 +123,17 @@ void Dialog::slotInitPass()
     qDebug()<<"Изменения пароля"<<encrypt;
 }
 
+void Dialog::closeEvent2()
+{
+    closeid=2;
+    this->close();
+}
+
+void Dialog::showEvent()
+{
+    this->show();
+}
+
 void Dialog::keyPressEvent(QKeyEvent *event)
 {
     if ( event->key() == Qt::Key_Return) {
@@ -119,6 +144,19 @@ void Dialog::keyPressEvent(QKeyEvent *event)
             ui->te_inputMess->clear();
         }
     }
+}
+
+void Dialog::closeEvent(QCloseEvent *eClose)
+{
+#ifdef Q_OS_WIN32
+    if(closeid!=2){
+        this->hide();
+        eClose->ignore();
+    } else {
+        _serv->stopServer();
+        eClose->accept();
+    }
+#endif
 }
 
 

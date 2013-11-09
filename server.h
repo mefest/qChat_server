@@ -39,6 +39,7 @@ public slots:
     void onChangePasswd(BLOWFISH_CTX* ctx_, bool* encr_);
     void sendCryptToAll(QString nam, QVector <int> vec);
     void sendRemoveUser(QString name);
+    void stopServer();
 
 
 private slots:

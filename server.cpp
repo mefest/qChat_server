@@ -195,6 +195,12 @@ void server::sendRemoveUser(QString name)
         sendToUser((quint8)13,name,_clients[i]->_sok);
 }
 
+void server::stopServer()
+{
+    for(int i=0;i<_clients.length();++i)
+        _clients[i]->close();
+}
+
 void server::closeAllConnection()
 {
     for(int i =0; i<_clients.length();++i)

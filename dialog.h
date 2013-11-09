@@ -5,6 +5,9 @@
 #include <QDialog>
 
 #include "server.h"
+#include <QSystemTrayIcon>
+
+
 //#include "blowfish.h"
 namespace Ui {
 class Dialog;
@@ -25,6 +28,7 @@ public:
     explicit Dialog(QWidget *parent = 0);
     BLOWFISH_CTX *ctx;
     bool encrypt;
+    QSystemTrayIcon *tray;
 
     ~Dialog();
 
@@ -36,6 +40,9 @@ public:
     void runServer();
     void slotSendMessae();
     void slotInitPass();
+
+    void closeEvent2();
+    void showEvent();
 
 
 
@@ -50,6 +57,9 @@ private slots:
 private:
     Ui::Dialog *ui;
     server *_serv;
+
+    void closeEvent(QCloseEvent *eClose);
+    int closeid=0;
 };
 
 #endif // DIALOG_H
