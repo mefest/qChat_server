@@ -20,7 +20,7 @@ Dialog::Dialog(QWidget *parent) :
     slotInitPass();
     connect(ui->btn_start,SIGNAL(clicked()),this,SLOT(runServer()));
     connect(ui->btn_send,SIGNAL(clicked()),this,SLOT(slotSendMessae()));
-
+    ui->ln_addr->setVisible(false);
 #ifdef Q_OS_WIN32
     tray = new QSystemTrayIcon(QIcon(":/icon/resource/icon/icon.ico"),this);
     tray->show();
@@ -110,7 +110,7 @@ void Dialog::onMessageToGui(QString name, QString mes)
 
 void Dialog::slotInitPass()
 {
-    if(ui->ln_passwd->text()!="")
+    if(ui->ln_passwd->text()!="" && ui->ln_passwd->text().length()>6)
     {
         QString key=ui->ln_passwd->text();
         Blowfish_Init (ctx, &key, key.length());

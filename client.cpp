@@ -5,6 +5,8 @@
 #include <QDataStream>
 #include <QVector>
 #include <QMessageBox>
+#include <QFile>
+#include <QDir>
 
 const QString client::constNameUnknown = QString(".Unknown");
 
@@ -102,12 +104,12 @@ void client::onConnect()
 
 void client::onConnectSoket()
 {
-                    QByteArray block;
-                    QDataStream out(&block, QIODevice::WriteOnly);
-                    out << (quint16)0 << (quint8)20 << "это другой текст";
-                    out.device()->seek(0);
-                    out << (quint16)(block.size() - sizeof(quint16));
-                    soket->write(block);
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << (quint16)0 << (quint8)20 << "это другой текст";
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    soket->write(block);
 }
 
 void client::onDisconnect()
@@ -179,12 +181,35 @@ void client::onReadyRead()
                 //авторизация пройдена
                 _name=temp;
                 _isAutched=true;
+            {
+                QFile file(QDir::currentPath()+"/motd.txt");
+                if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+                {
+                    qDebug()<<"file motd.txt not found";
+                }
+                else{
+
+
+                    QByteArray total;
+                    QByteArray line;
+                    while (!file.atEnd()) {
+                        line = file.read(1024);
+                        total.append(line);
+                    }
+
+
+                    _serv->sendToUser((quint8) 2,(QString)"System>"+QString(total),_sok);
+                }
+            }
+
                 //отправляем клиенту список онлай пользователей
 
                 doSendUsersOnline();
                 emit addUserToGui(temp);
                 //говорим всем что пользователь вошел
                 _serv->sendJoinNewUser(_name);
+
+
                 break;
             case 20:
             {
@@ -214,13 +239,13 @@ void client::onReadyRead()
                 qDebug()<<temp;
                 qDebug()<<_sok->localAddress()<<_sok->localPort();
                 qDebug()<<_sok->peerAddress()<<_sok->peerPort();
-                 _serv->sendToUser((quint8)25,QString::number(_sok->peerPort()),_sok);
-//                QByteArray block;
-//                QDataStream out(&block, QIODevice::WriteOnly);
-//                out << (quint16)0 << (quint8)20 << "это другой текст";
-//                out.device()->seek(0);
-//                out << (quint16)(block.size() - sizeof(quint16));
-//                soket->write(block);
+                _serv->sendToUser((quint8)25,QString::number(_sok->peerPort()),_sok);
+                //                QByteArray block;
+                //                QDataStream out(&block, QIODevice::WriteOnly);
+                //                out << (quint16)0 << (quint8)20 << "это другой текст";
+                //                out.device()->seek(0);
+                //                out << (quint16)(block.size() - sizeof(quint16));
+                //                soket->write(block);
             }
             }
         }

@@ -88,6 +88,9 @@
          <property name="text">
           <string>127.0.0.1</string>
          </property>
+         <property name="frame">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -110,7 +113,7 @@
         <widget class="QLineEdit" name="ln_passwd">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>1</horstretch>
+           <horstretch>2</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
