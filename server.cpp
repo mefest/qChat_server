@@ -201,6 +201,13 @@ void server::stopServer()
         _clients[i]->close();
 }
 
+void server::kick(QString name)
+{
+    for(int i=0;i<_clients.length();++i)
+        if(_clients[i]->_name==name)
+            _clients[i]->close();
+}
+
 void server::closeAllConnection()
 {
     for(int i =0; i<_clients.length();++i)

@@ -21,6 +21,7 @@ Dialog::Dialog(QWidget *parent) :
     connect(ui->btn_start,SIGNAL(clicked()),this,SLOT(runServer()));
     connect(ui->btn_send,SIGNAL(clicked()),this,SLOT(slotSendMessae()));
     ui->ln_addr->setVisible(false);
+    createMenuUserList();
 #ifdef Q_OS_WIN32
     tray = new QSystemTrayIcon(QIcon(":/icon/resource/icon/icon.ico"),this);
     tray->show();
@@ -134,6 +135,13 @@ void Dialog::showEvent()
     this->show();
 }
 
+void Dialog::createMenuUserList()
+{
+    menuUserList = new QMenu(this);
+    menuUserList->addAction(ui->act_Kick);
+    menuUserList->addAction(ui->actCall);
+}
+
 void Dialog::keyPressEvent(QKeyEvent *event)
 {
     if ( event->key() == Qt::Key_Return) {
@@ -160,3 +168,19 @@ void Dialog::closeEvent(QCloseEvent *eClose)
 }
 
 
+
+void Dialog::on_lw_users_customContextMenuRequested(const QPoint &pos)
+{
+    menuUserList->exec(ui->lw_users->mapToGlobal(pos));
+}
+
+void Dialog::on_act_Kick_triggered()
+{
+    if(ui->lw_users->count()>0)
+    _serv->kick(ui->lw_users->selectedItems().at(0)->text());
+}
+
+void Dialog::on_actCall_triggered()
+{
+
+}

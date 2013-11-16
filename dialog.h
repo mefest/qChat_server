@@ -29,6 +29,7 @@ public:
     BLOWFISH_CTX *ctx;
     bool encrypt;
     QSystemTrayIcon *tray;
+    QMenu *menuUserList;
 
     ~Dialog();
 
@@ -43,6 +44,7 @@ public:
 
     void closeEvent2();
     void showEvent();
+    void createMenuUserList();
 
 
 
@@ -53,6 +55,12 @@ protected:
 
 private slots:
 
+
+    void on_lw_users_customContextMenuRequested(const QPoint &pos);
+
+    void on_act_Kick_triggered();
+
+    void on_actCall_triggered();
 
 private:
     Ui::Dialog *ui;

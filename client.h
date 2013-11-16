@@ -17,6 +17,7 @@ public:
     static const quint8 comGetNick = 1;
     static const quint8 comMessageToAll = 20;
     static const quint8 comMessageAllEncrypt = 21;
+    QString _name;
     QTcpSocket *soket;
     explicit client(int desc, server *serv, QObject *parent = 0);
     explicit client(QTcpSocket *sok, server *serv, QObject *parent = 0);
@@ -53,7 +54,7 @@ private:
     QTcpSocket *_sok;
     server *_serv;
     quint16 _blockSize;
-    QString _name;
+
     bool _isAutched;
     
 };

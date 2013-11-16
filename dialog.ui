@@ -49,6 +49,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
         </widget>
        </item>
       </layout>
@@ -166,6 +169,19 @@
     </layout>
    </item>
   </layout>
+  <action name="act_Kick">
+   <property name="text">
+    <string>Kick</string>
+   </property>
+  </action>
+  <action name="actCall">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Позвонить</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

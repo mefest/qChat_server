@@ -40,6 +40,7 @@ public slots:
     void sendCryptToAll(QString nam, QVector <int> vec);
     void sendRemoveUser(QString name);
     void stopServer();
+    void kick(QString name);
 
 
 private slots:
