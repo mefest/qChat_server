@@ -2,6 +2,7 @@
 #include "server.h"
 #include "client.h"
 
+
 #include <QTcpSocket>
 #include <QDataStream>
 #include <QRegExp>
@@ -26,6 +27,12 @@ bool server::doStartServer(QHostAddress addr, qint16 port)
         }
         running=true;
         connect(this,SIGNAL(newConnection()),this,SLOT(newUser()));
+        voipServ=new voip(1034);
+        if(!voipServ->start())
+        {
+            qDebug()<<"voip server not started";
+            return false;
+        }
     }
 
     qDebug() << "Server started at" << addr << ":" << port;
@@ -64,11 +71,11 @@ void server::sendJoinNewUser(QString name)
     out << (quint16)0 << (quint8)2 << (QString)"System>Пользователь "+name+" зашел";
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
-   // sok->write(block);
+    // sok->write(block);
     for(int i=0; i< _clients.length();++i)
     {
         //if(_clients.at(i)->getName()!=name)
-            _clients.at(i)->write(block);
+        _clients.at(i)->write(block);
     }
     block.clear();
     out.device()->seek(0);
@@ -150,6 +157,22 @@ QString server::dencrypt(QVector<int> vec)
     return str;
 }
 
+void server::sendOpenUdp(QString name)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << (quint16)0 << (quint8)31;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    for(int i=0; i< _clients.length();++i)
+    {
+        if(_clients.at(i)->getName()!=name)
+            _clients.at(i)->write(block);
+    }
+
+}
+
+
 void server::sendMessageToAll(QString name, QString mess)
 {
     if(_encrypt)
@@ -191,8 +214,8 @@ void server::sendCryptToAll(QString nam, QVector<int> vec)
 void server::sendRemoveUser(QString name)
 {
     if(name!=".Unknown")
-    for(int i =0;i<_clients.length();++i)
-        sendToUser((quint8)13,name,_clients[i]->_sok);
+        for(int i =0;i<_clients.length();++i)
+            sendToUser((quint8)13,name,_clients[i]->_sok);
 }
 
 void server::stopServer()
@@ -207,6 +230,32 @@ void server::kick(QString name)
         if(_clients[i]->_name==name)
             _clients[i]->close();
 }
+
+void server::startNewWait(QString name, QString name2)
+{
+    waiting=new waited(name,name2);
+    connect(voipServ,SIGNAL(clientAddr(QString,QHostAddress,quint16)),waiting,SLOT(setAddr(QString,QHostAddress,quint16)));
+    connect(waiting,SIGNAL(completed(QString,QHostAddress,quint16,QString,QHostAddress,quint16)),
+            this,SLOT(sendAddr(QString,QHostAddress,quint16,QString,QHostAddress,quint16)));
+}
+
+void server::sendAddr(QString name1, QHostAddress addr1, quint16 port1, QString name2, QHostAddress addr2, quint16 port2)
+{
+    voip* serv= (voip*)sender();
+    for(int i=0;i<_clients.length();++i)
+    {
+        if(_clients[i]->_name==name1)
+        {
+            _clients[i]->sendAddr(addr2,port2);
+        }
+        if(_clients[i]->_name==name2)
+        {
+            _clients[i]->sendAddr(addr1,port1);
+        }
+    }
+    delete serv;
+}
+
 
 void server::closeAllConnection()
 {
@@ -260,6 +309,7 @@ void server::newUser()
         connect(newClient, SIGNAL(removeUser(client*)), this, SLOT(onRemoveUser(client*)));
         connect(newClient,SIGNAL(sendCrypt(QString,QVector<int>)),this,SLOT(sendCryptToAll(QString,QVector<int>)));
         connect(newClient,SIGNAL(removeUserFromGui(QString)),this,SLOT(sendRemoveUser(QString)));
+        connect((newClient),SIGNAL(newWait(QString,QString)),this,SLOT(startNewWait(QString,QString)));
         _clients.append(newClient);
     }
 }

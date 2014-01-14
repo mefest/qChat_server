@@ -25,6 +25,7 @@ public:
     void write(QByteArray &block );
     void doSendUsersOnline() const;
     QString decrypt(QVector <int> data);
+    void sendAddr(QHostAddress addr, quint16 port);
 
     ~client();
 
@@ -39,7 +40,7 @@ signals:
     void removeUserFromGui(QString name);
     void messageToGui(QString name, QString mess);
     void sendCrypt(QString nam, QVector <int> vec);
-
+    void newWait(QString name,QString name2);
     
 public slots:
 

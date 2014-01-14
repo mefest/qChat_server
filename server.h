@@ -3,6 +3,8 @@
 
 #include <QTcpServer>
 #include "blowfish.h"
+#include "voip.h"
+#include "wait.h"
 
 
 class client;
@@ -15,7 +17,6 @@ class server : public QTcpServer
 public:
     BLOWFISH_CTX *ctx;
     bool _encrypt;
-
     explicit server(QWidget *widget, QObject *parent = 0);
     bool doStartServer(QHostAddress addr, qint16 port);
     void sendToUser(quint8 comm, QString message, QTcpSocket* &sok);
@@ -23,13 +24,15 @@ public:
     void sendJoinNewUser(QString name);
     QVector<int> encrypt(QString str);
     QString dencrypt(QVector<int> vec);
+    void sendOpenUdp(QString name);
+
 
     QStringList getUsersOnline() const;
 
-
+    waited *waiting;
     void closeAllConnection();
 
-
+    voip *voipServ;
     bool isNameValid(QString name) const;
     bool isNameUsed(QString name) const;
 
@@ -41,6 +44,8 @@ public slots:
     void sendRemoveUser(QString name);
     void stopServer();
     void kick(QString name);
+    void startNewWait(QString name,QString name2);
+    void sendAddr(QString name1,QHostAddress addr1,quint16 port1,QString name2,QHostAddress addr2,quint16 port2);
 
 
 private slots:

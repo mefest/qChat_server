@@ -20,8 +20,14 @@
    <iconset resource="resource.qrc">
     <normaloff>:/icon/resource/icon/icon.ico</normaloff>:/icon/resource/icon/icon.ico</iconset>
   </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
+  </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3">
    <item>

@@ -5,7 +5,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets network
 
@@ -20,14 +20,21 @@ SOURCES += main.cpp\
         dialog.cpp \
     server.cpp \
     client.cpp \
-    blowfish.cpp
+    blowfish.cpp \
+    calling.cpp \
+    voip.cpp \
+    wait.cpp
 
 HEADERS  += dialog.h \
     server.h \
     client.h \
-    blowfish.h
+    blowfish.h \
+    calling.h \
+    voip.h \
+    wait.h
 
-FORMS    += dialog.ui
+FORMS    += dialog.ui \
+    calling.ui
 
 RESOURCES += \
     resource.qrc

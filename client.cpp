@@ -230,7 +230,7 @@ void client::onReadyRead()
                 mes=_serv->dencrypt(vec);
 
                 emit messageToGui(_name,mes);
-
+                break;
 
             }
             case 25:
@@ -247,11 +247,31 @@ void client::onReadyRead()
                 //                out << (quint16)(block.size() - sizeof(quint16));
                 //                soket->write(block);
             }
+            case 30:
+            {
+               in>>temp;
+               qDebug()<<temp;
+              _serv->sendOpenUdp(temp);
+              _serv->sendOpenUdp(_name);
+              emit newWait(_name,temp);
+              //_serv->voipServ->waitRead();
+                break;
+            }
             }
         }
     }
 }
 
+void client::sendAddr(QHostAddress addr, quint16 port)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << (quint16)0 << (quint8)32 << addr<<port;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    _sok->write(block);
+    qDebug()<<"отправлено"<<32<<" "<<addr<<port;
+}
 void client::onError(QAbstractSocket::SocketError socketError) const
 {
     switch (socketError) {
