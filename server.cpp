@@ -27,12 +27,14 @@ bool server::doStartServer(QHostAddress addr, qint16 port)
         }
         running=true;
         connect(this,SIGNAL(newConnection()),this,SLOT(newUser()));
+        /*
         voipServ=new voip(1034);
         if(!voipServ->start())
         {
             qDebug()<<"voip server not started";
             return false;
         }
+        */
     }
 
     qDebug() << "Server started at" << addr << ":" << port;
@@ -170,6 +172,11 @@ void server::sendOpenUdp(QString name)
             _clients.at(i)->write(block);
     }
 
+}
+
+int server::getClientCount()
+{
+    return client::countClient;
 }
 
 

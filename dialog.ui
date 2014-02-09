@@ -67,7 +67,7 @@
        <item>
         <widget class="QPushButton" name="btn_start">
          <property name="text">
-          <string>start server</string>
+          <string>start</string>
          </property>
         </widget>
        </item>
@@ -176,6 +176,9 @@
    </item>
   </layout>
   <action name="act_Kick">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Kick</string>
    </property>

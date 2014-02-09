@@ -25,7 +25,7 @@ public:
     QVector<int> encrypt(QString str);
     QString dencrypt(QVector<int> vec);
     void sendOpenUdp(QString name);
-
+    int getClientCount();
 
     QStringList getUsersOnline() const;
 

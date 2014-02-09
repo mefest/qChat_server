@@ -9,6 +9,7 @@
 #include <QDir>
 
 const QString client::constNameUnknown = QString(".Unknown");
+ int client::countClient=0;
 
 client::client(int desc, server *serv, QObject *parent)
 {
@@ -120,6 +121,7 @@ void client::onDisconnect()
     _sok->close();
     deleteLater();
     //delete this;
+    countClient--;
     emit removeUser(this);
     emit removeUserFromGui(_name);
 
@@ -179,6 +181,7 @@ void client::onReadyRead()
                 }
                 qDebug()<<"имя свободно";
                 //авторизация пройдена
+                countClient++;
                 _name=temp;
                 _isAutched=true;
             {
@@ -271,6 +274,11 @@ void client::sendAddr(QHostAddress addr, quint16 port)
     out << (quint16)(block.size() - sizeof(quint16));
     _sok->write(block);
     qDebug()<<"отправлено"<<32<<" "<<addr<<port;
+}
+
+void client::init()
+{
+    countClient=0;
 }
 void client::onError(QAbstractSocket::SocketError socketError) const
 {

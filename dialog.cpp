@@ -50,6 +50,8 @@ void Dialog::onAddUserToGui(QString name)
     //    ui->lwLog->item(0)->setTextColor(Qt::green);
 
     ui->lw_users->addItem(name);
+    if(_serv->getClientCount()>0)
+        ui->act_Kick->setEnabled(true);
 }
 
 void Dialog::runServer()
@@ -71,6 +73,7 @@ void Dialog::runServer()
         _serv->close();
         _serv->closeAllConnection();
         ui->btn_start->setText("start");
+        ui->act_Kick->setEnabled(false);
         _serv->running=false;
 
         qDebug()<<"server closed";
@@ -95,6 +98,8 @@ void Dialog::onRemoveUserFromGui(QString name)
             //            ui->lwLog->item(0)->setTextColor(Qt::green);
             break;
         }
+    if(_serv->getClientCount()<1)
+        ui->act_Kick->setEnabled(false);
 }
 
 void Dialog::onMessageToGui(QString name, QString mes)
@@ -177,10 +182,15 @@ void Dialog::on_lw_users_customContextMenuRequested(const QPoint &pos)
 void Dialog::on_act_Kick_triggered()
 {
     if(ui->lw_users->count()>0)
-    _serv->kick(ui->lw_users->selectedItems().at(0)->text());
+        _serv->kick(ui->lw_users->selectedItems().at(0)->text());
 }
 
 void Dialog::on_actCall_triggered()
+{
+
+}
+
+void Dialog::on_btn_start_clicked()
 {
 
 }

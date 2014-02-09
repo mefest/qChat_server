@@ -62,6 +62,8 @@ private slots:
 
     void on_actCall_triggered();
 
+    void on_btn_start_clicked();
+
 private:
     Ui::Dialog *ui;
     server *_serv;

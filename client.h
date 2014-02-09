@@ -9,10 +9,11 @@ class client : public QObject
     friend class server;
     Q_OBJECT
 
+
 public:
     //    BLOWFISH_CTX *ctx;
     //    bool _encrypt;
-
+    static int countClient;
     static const quint8 comAutchReq = 0;
     static const quint8 comGetNick = 1;
     static const quint8 comMessageToAll = 20;
@@ -26,6 +27,7 @@ public:
     void doSendUsersOnline() const;
     QString decrypt(QVector <int> data);
     void sendAddr(QHostAddress addr, quint16 port);
+    void init();
 
     ~client();
 
