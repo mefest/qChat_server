@@ -24,6 +24,7 @@ Dialog::Dialog(QWidget *parent) :
     createMenuUserList();
 #ifdef Q_OS_WIN32
     tray = new QSystemTrayIcon(QIcon(":/icon/resource/icon/icon.ico"),this);
+   // tray->setProperty("_sni_qt_category", "ApplicationStatus");
     tray->show();
     QMenu *Menu = new QMenu(this);
     QAction *showw = new QAction("Show", this);

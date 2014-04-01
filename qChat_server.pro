@@ -21,17 +21,13 @@ SOURCES += main.cpp\
     server.cpp \
     client.cpp \
     blowfish.cpp \
-    calling.cpp \
-    voip.cpp \
-    wait.cpp
+    calling.cpp
 
 HEADERS  += dialog.h \
     server.h \
     client.h \
     blowfish.h \
-    calling.h \
-    voip.h \
-    wait.h
+    calling.h
 
 FORMS    += dialog.ui \
     calling.ui

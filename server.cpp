@@ -238,31 +238,6 @@ void server::kick(QString name)
             _clients[i]->close();
 }
 
-void server::startNewWait(QString name, QString name2)
-{
-    waiting=new waited(name,name2);
-    connect(voipServ,SIGNAL(clientAddr(QString,QHostAddress,quint16)),waiting,SLOT(setAddr(QString,QHostAddress,quint16)));
-    connect(waiting,SIGNAL(completed(QString,QHostAddress,quint16,QString,QHostAddress,quint16)),
-            this,SLOT(sendAddr(QString,QHostAddress,quint16,QString,QHostAddress,quint16)));
-}
-
-void server::sendAddr(QString name1, QHostAddress addr1, quint16 port1, QString name2, QHostAddress addr2, quint16 port2)
-{
-    voip* serv= (voip*)sender();
-    for(int i=0;i<_clients.length();++i)
-    {
-        if(_clients[i]->_name==name1)
-        {
-            _clients[i]->sendAddr(addr2,port2);
-        }
-        if(_clients[i]->_name==name2)
-        {
-            _clients[i]->sendAddr(addr1,port1);
-        }
-    }
-    delete serv;
-}
-
 
 void server::closeAllConnection()
 {

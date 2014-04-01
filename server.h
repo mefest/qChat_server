@@ -3,8 +3,7 @@
 
 #include <QTcpServer>
 #include "blowfish.h"
-#include "voip.h"
-#include "wait.h"
+
 
 
 class client;
@@ -29,10 +28,8 @@ public:
 
     QStringList getUsersOnline() const;
 
-    waited *waiting;
     void closeAllConnection();
 
-    voip *voipServ;
     bool isNameValid(QString name) const;
     bool isNameUsed(QString name) const;
 
@@ -44,8 +41,6 @@ public slots:
     void sendRemoveUser(QString name);
     void stopServer();
     void kick(QString name);
-    void startNewWait(QString name,QString name2);
-    void sendAddr(QString name1,QHostAddress addr1,quint16 port1,QString name2,QHostAddress addr2,quint16 port2);
 
 
 private slots:
