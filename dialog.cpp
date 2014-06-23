@@ -20,11 +20,13 @@ Dialog::Dialog(QWidget *parent) :
     slotInitPass();
     connect(ui->btn_start,SIGNAL(clicked()),this,SLOT(runServer()));
     connect(ui->btn_send,SIGNAL(clicked()),this,SLOT(slotSendMessae()));
+    connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(closeTab(int)));
+    connect(_serv,SIGNAL(newRoom(QString)),this,SLOT(addNewRoom(QString)));
     ui->ln_addr->setVisible(false);
     createMenuUserList();
 #ifdef Q_OS_WIN32
     tray = new QSystemTrayIcon(QIcon(":/icon/resource/icon/icon.ico"),this);
-   // tray->setProperty("_sni_qt_category", "ApplicationStatus");
+    // tray->setProperty("_sni_qt_category", "ApplicationStatus");
     tray->show();
     QMenu *Menu = new QMenu(this);
     QAction *showw = new QAction("Show", this);
@@ -148,6 +150,12 @@ void Dialog::createMenuUserList()
     menuUserList->addAction(ui->actCall);
 }
 
+void Dialog::closeTab(int index)
+{
+    if (ui->tabWidget->tabText(index)!="general")
+        ui->tabWidget->removeTab(index);
+}
+
 void Dialog::keyPressEvent(QKeyEvent *event)
 {
     if ( event->key() == Qt::Key_Return) {
@@ -194,4 +202,9 @@ void Dialog::on_actCall_triggered()
 void Dialog::on_btn_start_clicked()
 {
 
+}
+
+void Dialog::addNewRoom(QString roomName)
+{
+    ui->listRoomWidget->addItem(roomName);
 }

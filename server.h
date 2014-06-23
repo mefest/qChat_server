@@ -3,11 +3,13 @@
 
 #include <QTcpServer>
 #include "blowfish.h"
+#include "room.h"
 
 
 
 class client;
 class Dialog;
+class room;
 
 class server : public QTcpServer
 {
@@ -21,6 +23,7 @@ public:
     void sendToUser(quint8 comm, QString message, QTcpSocket* &sok);
     void sendTextMessToAll(QString name,QString mess);
     void sendJoinNewUser(QString name);
+    void sendListRoom(QTcpSocket* &sok);
     QVector<int> encrypt(QString str);
     QString dencrypt(QVector<int> vec);
     void sendOpenUdp(QString name);
@@ -34,6 +37,11 @@ public:
     bool isNameUsed(QString name) const;
 
     static  bool running;
+
+    QList <room*> roomList;
+
+signals:
+    void newRoom(QString);
 public slots:
     void sendMessageToAll(QString name,QString mess);
     void onChangePasswd(BLOWFISH_CTX* ctx_, bool* encr_);

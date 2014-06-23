@@ -211,6 +211,7 @@ void client::onReadyRead()
                 emit addUserToGui(temp);
                 //говорим всем что пользователь вошел
                 _serv->sendJoinNewUser(_name);
+                _serv->sendListRoom(_sok);
 
 
                 break;

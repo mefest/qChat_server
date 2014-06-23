@@ -3,6 +3,7 @@
 #include "client.h"
 
 
+
 #include <QTcpSocket>
 #include <QDataStream>
 #include <QRegExp>
@@ -26,6 +27,9 @@ bool server::doStartServer(QHostAddress addr, qint16 port)
             return false;
         }
         running=true;
+        room* generalRoom= new room("general");
+        emit newRoom("general");
+        roomList.append(generalRoom);
         connect(this,SIGNAL(newConnection()),this,SLOT(newUser()));
         /*
         voipServ=new voip(1034);
@@ -92,6 +96,21 @@ void server::sendJoinNewUser(QString name)
     }
     qDebug()<<"отправлено"<<12<<" "<<name<<"пользователям";
 
+}
+
+void server::sendListRoom(QTcpSocket *&sok)
+{
+    QStringList lstRoom;
+    foreach (room* room_, roomList) {
+        lstRoom.append(room_->name);
+    }
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << (quint16)0 << (quint8)40 << lstRoom;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    sok->write(block);
+    qDebug()<<"отправлено"<<40<<" "<<lstRoom<<"пользователю"<<sok->socketDescriptor();
 }
 
 QVector<int> server::encrypt(QString str)
@@ -229,6 +248,7 @@ void server::stopServer()
 {
     for(int i=0;i<_clients.length();++i)
         _clients[i]->close();
+    roomList.clear();
 }
 
 void server::kick(QString name)

@@ -45,6 +45,7 @@ public:
     void closeEvent2();
     void showEvent();
     void createMenuUserList();
+    void closeTab(int index);
 
 
 
@@ -63,6 +64,8 @@ private slots:
     void on_actCall_triggered();
 
     void on_btn_start_clicked();
+
+    void addNewRoom(QString);
 
 private:
     Ui::Dialog *ui;

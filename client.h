@@ -2,8 +2,8 @@
 #define CLIENT_H
 
 #include <QObject>
-#include"server.h"
-
+#include "server.h"
+class server;
 class client : public QObject
 {
     friend class server;
