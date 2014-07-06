@@ -11,7 +11,7 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
-
+    closeid=0;
     this->setWindowFlags(Qt::WindowFullscreenButtonHint);
     //this->setWindowFlags(Qt::WindowCloseButtonHint);
     _serv = new server(this,this);

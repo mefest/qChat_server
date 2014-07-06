@@ -198,6 +198,16 @@ int server::getClientCount()
     return client::countClient;
 }
 
+void server::sendKeepAlive(QTcpSocket *&sok)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << (quint16)0 << (quint8)10;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    sok->write(block);
+}
+
 
 void server::sendMessageToAll(QString name, QString mess)
 {

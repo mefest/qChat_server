@@ -72,7 +72,7 @@ private:
     server *_serv;
 
     void closeEvent(QCloseEvent *eClose);
-    int closeid=0;
+    int closeid;
 };
 
 #endif // DIALOG_H

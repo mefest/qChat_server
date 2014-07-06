@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "server.h"
+#include <QTimer>
 class server;
 class client : public QObject
 {
@@ -13,6 +14,7 @@ class client : public QObject
 public:
     //    BLOWFISH_CTX *ctx;
     //    bool _encrypt;
+    bool keepAlive;
     static int countClient;
     static const quint8 comAutchReq = 0;
     static const quint8 comGetNick = 1;
@@ -47,6 +49,7 @@ signals:
 public slots:
 
 private slots:
+    void alive();
     void onConnect();
     void onConnectSoket();
     void onDisconnect();
@@ -55,6 +58,7 @@ private slots:
 
 private:
     QTcpSocket *_sok;
+    QTimer *timer;
     server *_serv;
     quint16 _blockSize;
 

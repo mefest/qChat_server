@@ -9,7 +9,7 @@
 #include <QDir>
 
 const QString client::constNameUnknown = QString(".Unknown");
- int client::countClient=0;
+int client::countClient=0;
 
 client::client(int desc, server *serv, QObject *parent)
 {
@@ -25,7 +25,11 @@ client::client(int desc, server *serv, QObject *parent)
     _sok = new QTcpSocket(this);
     //устанавливаем дескриптор из incomingConnection()
     _sok->setSocketDescriptor(desc);
+
+    timer=new QTimer();
+    timer->start(60000);
     //подключаем сигналы
+    connect(timer,SIGNAL(timeout()),this,SLOT(alive()));
     connect(_sok, SIGNAL(connected()), this, SLOT(onConnect()));
     connect(_sok, SIGNAL(disconnected()), this, SLOT(onDisconnect()));
     connect(_sok, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
@@ -46,9 +50,12 @@ client::client(QTcpSocket *sok, server *serv, QObject *parent)
     _blockSize = 0;
     //создаем сокет
     _sok = sok;
+    timer=new QTimer();
+    timer->start(60000);
     //устанавливаем дескриптор из incomingConnection()
     //_sok->setSocketDescriptor(desc);
     //подключаем сигналы
+    connect(timer,SIGNAL(timeout()),this,SLOT(alive()));
     connect(_sok, SIGNAL(connected()), this, SLOT(onConnect()));
     connect(_sok, SIGNAL(disconnected()), this, SLOT(onDisconnect()));
     connect(_sok, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
@@ -99,6 +106,15 @@ void client::close()
     _sok->close();
 }
 
+void client::alive()
+{
+    qDebug()<<"Alive timer";
+    if(keepAlive)
+        keepAlive=false;
+    else
+        _sok->close();
+}
+
 void client::onConnect()
 {
 }
@@ -130,6 +146,7 @@ void client::onDisconnect()
 
 void client::onReadyRead()
 {
+    keepAlive=true;
     if(_serv->running){
 
         QDataStream in(_sok);
@@ -152,6 +169,10 @@ void client::onReadyRead()
             qDebug()<<"команда"<<command;
             switch (command)
             {
+            case 10:
+                keepAlive=true;
+                _serv->sendKeepAlive(_sok);
+                break;
             case 0:
                 in>>temp;
                 qDebug()<<"текст"<<temp;
@@ -253,12 +274,12 @@ void client::onReadyRead()
             }
             case 30:
             {
-               in>>temp;
-               qDebug()<<temp;
-              _serv->sendOpenUdp(temp);
-              _serv->sendOpenUdp(_name);
-              emit newWait(_name,temp);
-              //_serv->voipServ->waitRead();
+                in>>temp;
+                qDebug()<<temp;
+                _serv->sendOpenUdp(temp);
+                _serv->sendOpenUdp(_name);
+                emit newWait(_name,temp);
+                //_serv->voipServ->waitRead();
                 break;
             }
             }

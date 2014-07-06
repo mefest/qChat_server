@@ -28,6 +28,7 @@ public:
     QString dencrypt(QVector<int> vec);
     void sendOpenUdp(QString name);
     int getClientCount();
+    void sendKeepAlive(QTcpSocket* &sok);
 
     QStringList getUsersOnline() const;
 
