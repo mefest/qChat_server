@@ -8,6 +8,8 @@
 #include <QFile>
 #include <QDir>
 
+#define ALIVE_TIME 60000
+
 const QString client::constNameUnknown = QString(".Unknown");
 int client::countClient=0;
 
@@ -27,7 +29,7 @@ client::client(int desc, server *serv, QObject *parent)
     _sok->setSocketDescriptor(desc);
 
     timer=new QTimer();
-    timer->start(60000);
+    timer->start(ALIVE_TIME);
     //подключаем сигналы
     connect(timer,SIGNAL(timeout()),this,SLOT(alive()));
     connect(_sok, SIGNAL(connected()), this, SLOT(onConnect()));
@@ -51,7 +53,7 @@ client::client(QTcpSocket *sok, server *serv, QObject *parent)
     //создаем сокет
     _sok = sok;
     timer=new QTimer();
-    timer->start(60000);
+    timer->start(ALIVE_TIME);
     //устанавливаем дескриптор из incomingConnection()
     //_sok->setSocketDescriptor(desc);
     //подключаем сигналы
@@ -108,11 +110,16 @@ void client::close()
 
 void client::alive()
 {
-    qDebug()<<"Alive timer";
+    qDebug()<<"Alive timer "<<ALIVE_TIME;
     if(keepAlive)
+    {
         keepAlive=false;
-    else
+        qDebug()<<"alive is false, warning";
+    }
+    else{
         _sok->close();
+        qDebug()<<"alive is true, close connectoin";
+    }
 }
 
 void client::onConnect()
@@ -171,7 +178,9 @@ void client::onReadyRead()
             {
             case 10:
                 keepAlive=true;
+                in>>temp;
                 _serv->sendKeepAlive(_sok);
+                qDebug()<<"client is alive";
                 break;
             case 0:
                 in>>temp;

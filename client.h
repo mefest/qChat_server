@@ -14,7 +14,6 @@ class client : public QObject
 public:
     //    BLOWFISH_CTX *ctx;
     //    bool _encrypt;
-    bool keepAlive;
     static int countClient;
     static const quint8 comAutchReq = 0;
     static const quint8 comGetNick = 1;
@@ -57,6 +56,7 @@ private slots:
     void onError(QAbstractSocket::SocketError socketError) const;
 
 private:
+    bool keepAlive;
     QTcpSocket *_sok;
     QTimer *timer;
     server *_serv;
